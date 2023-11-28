@@ -2,9 +2,16 @@ import streamlit as st
 import app_module as op
 import plotly.tools as tls
 
-st.write("# EWP Beam capacities graph")
-st.write('Find your beam section from knowing your span and tributary load.')
-st.write('Assumes the beams compressive edge is held in line by direct connection of decking or joists spaced not more than 610 mm apart and bridging or blocking is installed at intervals not exceeding eight times the depth of the member, i.e. KL = 1.')
+st.write("# Span-to-trib-width limits for PSL beams")
+st.write('The curves combines the shear, moment, and deflection limits of each beam whichever is the most defavorable at a specific span. A secondary cuves includes also the bearing limits of the beams.')
+st.write("## Assumptions:")
+st.write('- Simply supported PSL beams loaded with uniformly distributed loads.')
+st.write('- The limits are calculated according to the CSA O86-19 standard.')
+st.write('- The beams compressive edge is held in line by direct connection of decking or joists spaced not more than 610 mm apart and bridging or blocking is installed at intervals not exceeding eight times the depth of the member, i.e. KL = 1.')
+st.write('- Takes in account the load duration factor K_D per CSA 086 19 cl 5.3.2.2')
+st.write('- Takes in account the shear deflection by using the apparent modulus of elasticity E_a per CSA 086 19 cl')
+st.write('After filling the information on the right over the mouse over the curves to get the maximum tributary width a PSL beam can support for a specific span.')
+
 
 floor_depth = [9.25, 9.5, 11.25, 11.875, 14, 16, 19]
 
@@ -19,24 +26,40 @@ section_data.set_index('Name', inplace=True)
 section_data = op.sections_filter(section_data, 'ge', Depth=min_floor_thickness)
 section_data = op.sections_filter(section_data, 'le', Depth=max_floor_thickness)
 
-st.sidebar.write("## Loading")
-occ1_D = st.sidebar.number_input(label = "Occupancy 1 Dead load (psf)", value = 20)
-occ1_L = st.sidebar.number_input(label = "Occupancy 1 Live load (psf)", value = 40)
-occ1_S = st.sidebar.number_input(label = "Occupancy 1 Snow load (psf)", value = 180)
+st.sidebar.write("## Occupancy Loading")
+occ1_D = st.sidebar.number_input(label = "Dead load (psf)", value = 20)
+occ1_L = st.sidebar.number_input(label = "Live load (psf)", value = 40)
+occ1_S = st.sidebar.number_input(label = "Snow load (psf)", value = 180)
 
 st.sidebar.write("## Deflection Limits")
 w_delt_L = st.sidebar.number_input(label = "Live = L/", value = 360)
 w_delt_T = st.sidebar.number_input(label = "Total = L/", value = 180)
 w_delt_P = st.sidebar.number_input(label = "Permanent = L/", value = 360)
 
-streamlit_theme = st.get_option("theme.primaryColor")
-is_dark_theme = streamlit_theme == "#FFFFFF"
-text_color = 'white' if is_dark_theme else 'black'
+st.sidebar.write("## Bearing")
+pl_mat = st.sidebar.selectbox("Support material", 
+                              ['D.Fir SS',
+                                'D.Fir No. 1/No. 2',
+                                'Hem-Fir L. No. 1/No. 2',
+                                'SPF No. 1/No. 2',
+                                'Northern No. 1/No. 2'])
 
-fig = op.plot_beams(occ1_D, occ1_L, occ1_S, section_data, w_delt_L, w_delt_T, w_delt_P, text_color)
+brg_length = st.sidebar.number_input(label = "Bearing Length (in)", value = 5.5)
+
+fig = op.plot_beams(
+    D = occ1_D,
+    L = occ1_L, 
+    S = occ1_S, 
+    section_data = section_data, 
+    w_delt_L = w_delt_L, 
+    w_delt_T = w_delt_T, 
+    w_delt_P = w_delt_P, 
+    pl_mat = pl_mat, 
+    brg_length = brg_length)
+
 plotly_fig = tls.mpl_to_plotly(fig)
 plotly_fig.update_layout(
-    title_text='Plotly Figure with Title', 
+    title_text='PSL Beams capacities', 
     title_x=0.35
     )
 fig = st.plotly_chart(plotly_fig, use_container_width=True)
