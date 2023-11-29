@@ -12,7 +12,7 @@ with tab1:
     st.write('After filling the information on the right over the mouse over the curves to get the maximum tributary width a PSL beam can support for a specific span.')
 
 
-    floor_depth = [9.25, 9.5, 11.25, 11.875, 14, 16, 19]
+    floor_depth = [9.5, 11.25, 11.875, 14, 16, 19]
 
     st.sidebar.write("## Floor thickness")
     min_floor_thickness = st.sidebar.selectbox("Minimum floor thickness", floor_depth)
@@ -41,7 +41,7 @@ with tab1:
                                     'D.Fir No. 1/No. 2',
                                     'Hem-Fir L. No. 1/No. 2',
                                     'SPF No. 1/No. 2',
-                                    'Northern No. 1/No. 2'])
+                                    'Northern No. 1/No. 2'], index = 1)
 
     brg_length = st.sidebar.number_input(label = "Bearing Length (in)", value = 5.5)
 
@@ -85,6 +85,8 @@ with tab2:
     st.write('       Deflection under total load is the maximum of:')
     st.latex(r'''D + L + 0.5 * S''')
     st.latex(r'''D + 0.5 * L + S''')
+    st.write('Deflection limits calculated consider bending and shear deflection using the following equation:')
+    st.latex(r'''\Delta = \frac{270 wL^4}{Ebd^3} + \frac{28.8 wL^2}{Ebd}''')
 
 with tab3:
     st.header("Beams factored resistances")

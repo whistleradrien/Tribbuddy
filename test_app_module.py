@@ -116,7 +116,8 @@ def test_WeyerBeam_prop():
         'Factored Moment Resistance (ft-lbs)': 20655,
         'Factored Shear Resistance (lbs)': 10490,
         'Moment of Inertia (in.4)': 231,
-        'Weight (plf)': 10,  
+        'Weight (plf)': 10,
+        'Modulus of Elasticity (psi)': 2200000,   
         'Apparent Modulus of Elasticity (psi)': 2126000,        
         'Compression Perpendicular to Grain (psi)': 1135,   
         'Horizontal Shear Parallel to Grain (psi)': 540
@@ -126,7 +127,7 @@ def test_WeyerBeam_prop():
 
 
     assert sec.Name == '3.5x9.25 PSL'
-    assert sec.E == 2126000	* us.psi
+    assert sec.E == 2200000	* us.psi
     assert sec.Vr == 10490 * us.lb
 
 
@@ -139,7 +140,7 @@ def test_working_load ():
         Depth=9.500 * us.inch,
         Vr=16160.000 * us.lb,
         Mr=32580.000 * us.lbft,
-        E=2126000.000 * us.psi, 
+        E=2200000.000 * us.psi, 
         I=375.000 * us.inch**4, 
         Weight=16.000 * us.lb_ft, 
         f_cp=1135.000 * us.psi, 
@@ -153,9 +154,9 @@ def test_working_load ():
     expected = wb.working_load(my_beam =  my_beam, L = L, delta_T = delta_T, delta_L = delta_L, delta_P = delta_P, kd = kd)
     assert math.isclose(1135.57 * us.lb_ft, expected[0], rel_tol=1e-2)
     assert math.isclose(495.01 * us.lb_ft, expected[1], rel_tol=1e-2)
-    assert math.isclose(373.08 * us.lb_ft, expected[2], rel_tol=1e-2)
-    assert math.isclose(279.81 * us.lb_ft, expected[3], rel_tol=1e-2)
-    assert math.isclose(186.52 * us.lb_ft, expected[4], rel_tol=1e-2)
+    assert math.isclose(375.609 * us.lb_ft, expected[2], rel_tol=1e-2)
+    assert math.isclose(281.7 * us.lb_ft, expected[3], rel_tol=1e-2)
+    assert math.isclose(187.8 * us.lb_ft, expected[4], rel_tol=1e-2)
     
 
 def test_get_trib():

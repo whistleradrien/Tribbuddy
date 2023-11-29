@@ -190,7 +190,7 @@ def WeyerBeam_prop(section_data: pd.DataFrame, name: str) -> WeyerBeam: #tested
     Vr = section_data.loc[name, 'Factored Shear Resistance (lbs)'] * us.lb
     Mr = section_data.loc[name, 'Factored Moment Resistance (ft-lbs)'] * us.lbft
     weight = section_data.loc[name, 'Weight (plf)'] * us.lb_ft
-    E = section_data.loc[name, 'Apparent Modulus of Elasticity (psi)'] * us.psi
+    E = section_data.loc[name, 'Modulus of Elasticity (psi)'] * us.psi
     I = section_data.loc[name, 'Moment of Inertia (in.4)'] * us.inch**4
     f_cp = section_data.loc[name, 'Compression Perpendicular to Grain (psi)'] * us.psi
     f_v = section_data.loc[name, 'Horizontal Shear Parallel to Grain (psi)'] * us.psi
@@ -269,22 +269,27 @@ def working_load (my_beam: Beam, L: float, delta_T: float, delta_L: float, delta
     fcp_brg_pl: Bearing strength perpendicular to grain of plate material supporting the beam
     brg_length: Bearing length in inches
     """
-    L = L * us.ft
+    L_ft = L * us.ft
     Vr = my_beam.Vr * kd
     Mr = my_beam.Mr * kd
 
-    E = my_beam.E
-    I = my_beam.I
+    E = my_beam.E / us.psi
+    print(f'E = {E}')
+    b = my_beam.Width / us.inch
+    print(f'b = {b}')
+    d = my_beam.Depth / us.inch
+    print(f'd = {d}')
+    print(f'L = {L}')
+    delta_P = L*12 / delta_P
+    delta_L = L*12 / delta_L
+    delta_T = L*12 / delta_T
+    print(f'delta_P = {delta_P}')
 
-    delta_P = L / delta_P
-    delta_L = L / delta_L
-    delta_T = L / delta_T
-
-    w_Vr = Vr * 2 / L 
-    w_Mr = Mr * 8 / (L**2)
-    w_delt_T = (delta_T * 384 * E * I / (5 * L**4)).to('lb_ft')
-    w_delt_L = (delta_L * 384 * E * I / (5 * L**4)).to('lb_ft')
-    w_delt_P = (delta_P * 384 * E * I / (5 * L**4)).to('lb_ft')
+    w_Vr = Vr * 2 / L_ft 
+    w_Mr = Mr * 8 / (L_ft**2)
+    w_delt_T = delta_T / (((270 * L**4)/(E * b * d**3)) + ((28.8 * L**2)/(E * b * d))) * us.lb_ft
+    w_delt_L = delta_L / (((270 * L**4)/(E * b * d**3)) + ((28.8 * L**2)/(E * b * d))) * us.lb_ft
+    w_delt_P = delta_P / (((270 * L**4)/(E * b * d**3)) + ((28.8 * L**2)/(E * b * d))) * us.lb_ft
 
     return (w_Vr, w_Mr, w_delt_T, w_delt_L, w_delt_P)
 
