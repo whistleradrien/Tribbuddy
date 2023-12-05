@@ -84,7 +84,7 @@ class bearing_plate:
 
 def weyer_sections () -> pd.DataFrame:
     """
-    Function that will load the appropriate sections based on the unit system that is entered. Opens US by default.
+    Function that will loads the commonly used PSL beams sections.
     """
     data = pd.read_csv(WEYER_DB_US_PATH)
     Width = data['Width'] >= 3.5

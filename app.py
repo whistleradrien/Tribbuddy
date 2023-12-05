@@ -85,8 +85,10 @@ with tab2:
     st.write('       Deflection under total load is the maximum of:')
     st.latex(r'''D + L + 0.5 * S''')
     st.latex(r'''D + 0.5 * L + S''')
-    st.write('Deflection limits calculated consider bending and shear deflection using the following equation:')
+    st.write('- Deflection limits calculated consider bending and shear deflection using the following equation:')
     st.latex(r'''\Delta = \frac{270 wL^4}{Ebd^3} + \frac{28.8 wL^2}{Ebd}''')
+    
+
 
 with tab3:
     st.header("Beams factored resistances")
